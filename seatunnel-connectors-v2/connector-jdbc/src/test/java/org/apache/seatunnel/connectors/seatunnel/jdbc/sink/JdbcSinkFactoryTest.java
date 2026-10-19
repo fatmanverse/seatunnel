@@ -232,6 +232,23 @@ class JdbcSinkFactoryTest {
         Assertions.assertTrue(exception.getMessage().contains("[tabel]"));
     }
 
+    /** {@code numeric_special_value_as_null} only applies to reading, so the sink rejects it. */
+    @Test
+    void testSourceOnlyNumericSpecialValueOptionIsUnknownKey() {
+        Map<String, Object> cfg = baseConfig();
+        cfg.put("numeric_special_value_as_null", true);
+
+        OptionValidationException exception =
+                Assertions.assertThrows(
+                        OptionValidationException.class,
+                        () ->
+                                ConfigValidator.validateUnknownKeys(
+                                        ReadonlyConfig.fromMap(cfg), rule, "Jdbc"));
+        Assertions.assertTrue(
+                exception.getMessage().contains("[numeric_special_value_as_null]"),
+                exception.getMessage());
+    }
+
     // ---- Entry-level regression tests through factory-context path ----
 
     @Test
